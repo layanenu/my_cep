@@ -2,19 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class AuthProvider extends ChangeNotifier {
   String? message;
   String? token;
 
-  final String _url = dotenv.env['API_URL'] ?? '';
-  final String _resource = dotenv.env['API_RESOURCE'] ?? '';
-  final String _apiKey = dotenv.env['API_KEY'] ?? '';
+  final _url = 'https://identitytoolkit.googleapis.com/v1/';
+  final _resource = 'accounts:'; // signUp // signInWithPassword
+  final _apiKey = '?key=AIzaSyDgnQPocepB41aR1pkb8V6ien-76zDZ3d0';
 
   Future<bool> authRequest(String email, String password, String action) async {
-    String sUri = '$_url$_resource:$action?key=$_apiKey';
+    String sUri = '$_url$_resource$action$_apiKey';
     Uri uri = Uri.parse(sUri);
     var response = await http.post(uri, body: {
       'email': email,

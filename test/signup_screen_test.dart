@@ -27,8 +27,8 @@ void main() {
 
     expect(find.byType(AppBar), findsOneWidget);
     expect(find.text('Tela de cadastro'), findsOneWidget);
-    expect(find.byKey(Key('emailField')), findsOneWidget); // Adicionando chave ao campo de email
-    expect(find.byKey(Key('passwordField')), findsOneWidget); // Adicionando chave ao campo de senha
+    expect(find.byKey(Key('emailField')), findsOneWidget);
+    expect(find.byKey(Key('passwordField')), findsOneWidget);
     expect(find.byType(ElevatedButton), findsOneWidget);
   });
 

@@ -1,15 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:my_cep/services/pesquisar_cep.dart';
 import 'package:my_cep_pk/my_cep_pk.dart';
 
 class ConsultaCepScreen extends StatefulWidget {
   @override
-  _ConsultaCepScreenState createState() => _ConsultaCepScreenState();
+  ConsultaCepScreenState createState() => ConsultaCepScreenState();
 }
-
-class _ConsultaCepScreenState extends State<ConsultaCepScreen> {
+class ConsultaCepScreenState extends State<ConsultaCepScreen> {
   final TextEditingController _cepController = TextEditingController();
   String _resultado = '';
   String _ultimaPesquisa = '';
+
+   final CepDataSourceImpl _cepDataSourceImpl = CepDataSourceImpl(Dio());
+  
 
   @override
   void initState() {
@@ -18,16 +22,17 @@ class _ConsultaCepScreenState extends State<ConsultaCepScreen> {
   }
 
   void carregarResultadoSalvo() async {
-    String? resultado = await CepService.carregarResultadoSalvo();
+    String? resultado = await CepStorage.carregarResultadoSalvo();
     setState(() {
       _ultimaPesquisa = resultado ?? '';
     });
   }
 
-  void _pesquisarCep() async {
+  void getInputCep() async {
     String cep = _cepController.text;
     if (cep.isNotEmpty) {
-      String resultado = await CepService.pesquisarCep(cep);
+      String resultado = await _cepDataSourceImpl.pesquisarCep(cep);
+       await CepStorage.salvarResultado(resultado);
       setState(() {
         _resultado = resultado;
         _ultimaPesquisa = resultado;
@@ -38,6 +43,7 @@ class _ConsultaCepScreenState extends State<ConsultaCepScreen> {
       });
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +65,7 @@ class _ConsultaCepScreenState extends State<ConsultaCepScreen> {
             ),
             SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _pesquisarCep,
+              onPressed: getInputCep,
               child: Text('Pesquisar'),
             ),
             SizedBox(height: 16),
