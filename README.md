@@ -29,7 +29,62 @@ API_KEY=your_api_key_here
 
 <summary>Como testar o consumo de uma API externa</summary>
 
-FALTA
+* No arquivo pubspec.yaml do seu projeto Flutter, adicione a dependência Dio;
+* Depois, execute o comando para atualizar as dependências: flutter pub get
+* Crie a classe CepDataSource
+
+```
+import 'package:dio/dio.dart';
+
+abstract class CepDataSource {
+  Future<String> pesquisarCep(String cep);
+}
+
+class CepDataSourceImpl {
+  final Dio dio;
+
+  CepDataSourceImpl(this.dio);
+
+
+  Future<String> pesquisarCep(String cep) async {
+    final response = await dio.get('https://viacep.com.br/ws/$cep/json/');
+    if (response.statusCode == 200 && response.data['erro'] == null) {
+      final data = response.data;
+      return 'Endereço: ${data['logradouro']}, ${data['bairro']}, ${data['localidade']}, ${data['uf']}';
+    } else {
+      return 'CEP não encontrado.';
+    }
+  }
+}
+```
+* Testando a API: Você pode testar manualmente a implementação criando uma instância de Dio e chamando o método pesquisarCep.
+
+```
+void main() async {
+  final dio = Dio();
+  final cepDataSource = CepDataSourceImpl(dio);
+
+  String result = await cepDataSource.pesquisarCep('01001000');
+  print(result); // Exemplo de saída: "Endereço: Praça da Sé, Sé, São Paulo, SP"
+}
+
+```
+* Ou você pode fazer testes automatizados como os testes implementados nesse repositório, no link abaixo:
+
+```
+https://github.com/layanenu/my_cep/blob/main/test/cep_service_test.dart
+```
+* Tratamento de Respostas
+
+Códigos de Status Comuns:
+200 OK: A requisição foi bem-sucedida e o CEP foi encontrado.
+400 Bad Request: A requisição foi malformada.
+404 Not Found: O endpoint não foi encontrado (uso incorreto da URL).
+500 Internal Server Error: Erro no servidor da API.
+
+Tratamento de Erros Comuns:
+Erro 400: Verifique se o formato do CEP está correto (8 dígitos).
+Erro 500: Tente novamente mais tarde. Pode ser um problema temporário no servidor da API.
 
 </details>
 
